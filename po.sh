@@ -1,0 +1,18 @@
+#!/bin/bash
+
+curl --silent 'https://www.shmu.sk/sk/?page=59' |
+	tr -d '\n' | tr '<' '\n' |
+	grep '^td ' | grep -E 'stanica|teplota' |
+	while read VAR
+	do
+		if echo "$VAR" | grep stanica > /dev/null
+		then
+			STANICA=$(echo "$VAR" | sed 's/.*>//')
+			echo 'stanica -->' $STANICA
+		else
+			TEPLOTA=$(echo "$VAR" | sed 's/.*>\([^ ]*\) .*/\1/')
+			echo 'teplota -->' $TEPLOTA
+			echo "$STANICA : $TEPLOTA"
+		fi
+	done
+	
